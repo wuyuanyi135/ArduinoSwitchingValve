@@ -43,11 +43,15 @@ void handleEvent(AceButton * /* button */, uint8_t eventType,
         case AceButton::kEventClicked:
         case AceButton::kEventReleased:
             state.set_value(!state.get_value(), true);
+            state.notify_get_request_completed(); // also update remote.
+            break;
+        default:
             break;
     }
 }
 
 void setup() {
+    Serial.begin(115200);
 // write your initialization code here
     pinMode(PIN_CH1, OUTPUT);
     pinMode(PIN_CH2, OUTPUT);
@@ -63,12 +67,12 @@ void loop() {
     esp8266init.client.loop();
 
     if (esp8266init.async_init() == ESP8266Init::FINISHED) {
-        state.register_interface(mqttInterface);
         state.set_update_callback([](bool oldVal, bool newVal) {
             if (oldVal != newVal) {
                 switch_to(newVal);
             }
         });
+        state.register_interface(mqttInterface);
         cycle.register_interface(mqttInterface);
     }
 
