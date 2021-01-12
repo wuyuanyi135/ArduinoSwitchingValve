@@ -3,10 +3,12 @@
 #include <PropertyNode.h>
 #include <ESP8266Init.h>
 #include <PubSubClientInterface.h>
+#include <OTA.h>
 
 #define PIN_BTN D1
 #define PIN_CH1 D8
 #define PIN_CH2 D7
+#define PIN_EN D2
 
 #define CYCLE_TIME_MS 3500
 
@@ -19,6 +21,7 @@ ESP8266Init esp8266init(
         1883,
         "Arduino Valve Switcher"
 );
+OTA ota{80};
 PropertyNode<int> cycle("cycle", 3500, false, true);
 PropertyNode<bool> state("state", false, false, true);
 PubSubClientInterface mqttInterface(esp8266init.client);
@@ -65,6 +68,7 @@ void setup() {
 
 void loop() {
     esp8266init.client.loop();
+    ota.loop(); // OTA has built in initialization check. Loop as you want.
 
     if (esp8266init.async_init() == ESP8266Init::FINISHED) {
         state.set_update_callback([](bool oldVal, bool newVal) {
@@ -72,6 +76,7 @@ void loop() {
                 switch_to(newVal);
             }
         });
+        ota.begin();
         state.register_interface(mqttInterface);
         cycle.register_interface(mqttInterface);
     }
