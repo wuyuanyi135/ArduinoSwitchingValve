@@ -8,7 +8,7 @@
 #define PIN_BTN D1
 #define PIN_CH1 D8
 #define PIN_CH2 D7
-#define PIN_EN D2
+#define PIN_EN D5
 
 #define CYCLE_TIME_MS 3500
 
