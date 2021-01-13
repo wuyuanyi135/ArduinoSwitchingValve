@@ -16,7 +16,7 @@ using namespace ace_button;
 AceButton button(PIN_BTN);
 ESP8266Init esp8266init("DCHost", "dchost000000", "192.168.43.1", 1883,
                         "Arduino Valve Switcher");
-OTA ota{80};
+OTA ota{80, "Valve Switcher"};
 PropertyNode<int> cycle("cycle", 3500, false, true);
 PropertyNode<bool> state("state", false, false, true);
 PubSubClientInterface mqttInterface(esp8266init.client);
@@ -55,6 +55,7 @@ void setup() {
   // write your initialization code here
   pinMode(PIN_CH1, OUTPUT);
   pinMode(PIN_CH2, OUTPUT);
+  pinMode(PIN_EN, OUTPUT);
   pinMode(PIN_BTN, INPUT_PULLUP);
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH); // Turn off
